@@ -176,12 +176,16 @@ class PlaywrightRenderer {
      * Capture a screenshot of the given input
      * @param {Object} options
      */
+    /**
+     * Capture a screenshot of the given input
+     * @param {Object} options
+     * @returns {Promise<Buffer>} The image buffer
+     */
     async capture(options) {
         console.log('🎨 [Renderer] Capture called with options:', JSON.stringify(options, null, 2));
         const {
             input,
             inputType, // 'url' or 'html' or 'file'
-            outputPath,
             format = 'png',
             quality = 100,
             scale = 2,
@@ -275,7 +279,6 @@ class PlaywrightRenderer {
 
             // Determine screenshot options
             let screenshotOptions = {
-                path: outputPath,
                 type: format === 'jpg' ? 'jpeg' : format,
                 quality: (format === 'jpg' || format === 'webp') ? quality : undefined,
                 scale: 'device', // Use device pixels to respect deviceScaleFactor
@@ -295,12 +298,12 @@ class PlaywrightRenderer {
             }
 
             console.log(`📸 Taking screenshot with scale ${scale}...`);
-            await page.screenshot(screenshotOptions);
+            let imageBuffer = await page.screenshot(screenshotOptions);
+            let processedBuffer = imageBuffer;
 
             // Post-processing: Crop with Sharp if needed
             if (smartCrop && cropBounds) {
                 console.log('🔪 [Sharp] Cropping image...');
-                const buffer = fs.readFileSync(outputPath);
 
                 // Coordinates from calculateContentBounds are in CSS pixels.
                 // We need to multiply by scale (deviceScaleFactor) for Sharp.
@@ -311,27 +314,22 @@ class PlaywrightRenderer {
 
                 console.log(`🔪 [Sharp] Cropping area (scaled): x=${left}, y=${top}, w=${width}, h=${height}`);
 
-                await sharp(buffer)
+                processedBuffer = await sharp(imageBuffer)
                     .extract({ left, top, width, height })
-                    .toFile(outputPath + '.cropped'); // Save to temp file first
+                    .toBuffer();
 
-                // Replace original
-                fs.unlinkSync(outputPath);
-                fs.renameSync(outputPath + '.cropped', outputPath);
-                console.log('✅ Cropped image saved.');
+                console.log('✅ Cropped image processed.');
             }
 
             // ============ Apply Watermark ============
             if (watermarkEnabled && watermarkText) {
                 console.log('🏷️ [Sharp] Adding watermark:', watermarkText);
-                const buffer = fs.readFileSync(outputPath);
-                const image = sharp(buffer);
+                const image = sharp(processedBuffer);
                 const metadata = await image.metadata();
 
                 // Create SVG text overlay
                 const fontSize = Math.max(16, Math.round(metadata.width / 40));
                 const padding = 20;
-                const textWidth = watermarkText.length * fontSize * 0.6; // Approximate
                 const svgText = `
                     <svg width="${metadata.width}" height="${metadata.height}">
                         <defs>
@@ -352,20 +350,18 @@ class PlaywrightRenderer {
                     </svg>
                 `;
 
-                await image
+                processedBuffer = await image
                     .composite([{
                         input: Buffer.from(svgText),
                         gravity: 'southeast'
                     }])
-                    .toFile(outputPath + '.watermarked');
+                    .toBuffer();
 
-                fs.unlinkSync(outputPath);
-                fs.renameSync(outputPath + '.watermarked', outputPath);
                 console.log('✅ Watermark applied.');
             }
 
-            console.log(`✅ Saved to ${outputPath}`);
-            return outputPath;
+            console.log(`✅ Image processing complete (Size: ${(processedBuffer.length / 1024).toFixed(2)} KB)`);
+            return processedBuffer;
 
         } catch (error) {
             console.error('❌ Capture failed:', error);

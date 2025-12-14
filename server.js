@@ -36,6 +36,7 @@ app.use('/temp', express.static(tempDir));
 app.use(express.static(__dirname));
 
 // Cleanup task
+// Cleanup uploaded files only (since output is now in-memory)
 function cleanupTempFiles() {
     fs.readdir(tempDir, (err, files) => {
         if (err) return console.error('Error cleaning temp files:', err);
@@ -61,20 +62,14 @@ const renderer = new PlaywrightRenderer();
 app.post('/convert/url', async (req, res) => {
     const { url, settings } = req.body;
     console.log('📨 [Server] Received /convert/url request');
-    console.log('📦 [Server] Body settings:', settings);
     const { format, scale, smartCrop, smartCropPadding, width, dynamicMode, watermarkEnabled, watermarkText } = settings || {};
-    console.log(`🔍 [Server] Extracted scale: ${scale} (Type: ${typeof scale})`);
 
     if (!url) return res.status(400).json({ error: 'URL is required' });
 
     try {
-        const outputFileName = `${uuidv4()}.${format || 'png'}`;
-        const outputPath = path.join(tempDir, outputFileName);
-
-        await renderer.capture({
+        const buffer = await renderer.capture({
             input: url,
             inputType: 'url',
-            outputPath,
             format: format || 'png',
             scale: Number(scale) || 2,
             smartCrop: !!smartCrop,
@@ -85,8 +80,10 @@ app.post('/convert/url', async (req, res) => {
             watermarkText: watermarkText || ''
         });
 
-        res.json({ success: true, imageUrl: `/temp/${outputFileName}` });
+        res.set('Content-Type', `image/${format || 'png'}`);
+        res.send(buffer);
     } catch (error) {
+        console.error('API Error:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -98,13 +95,9 @@ app.post('/convert/html', async (req, res) => {
     if (!html) return res.status(400).json({ error: 'HTML content is required' });
 
     try {
-        const outputFileName = `${uuidv4()}.${format || 'png'}`;
-        const outputPath = path.join(tempDir, outputFileName);
-
-        await renderer.capture({
+        const buffer = await renderer.capture({
             input: html,
             inputType: 'html',
-            outputPath,
             format: format || 'png',
             scale: Number(scale) || 2,
             smartCrop: !!smartCrop,
@@ -115,8 +108,10 @@ app.post('/convert/html', async (req, res) => {
             watermarkText: watermarkText || ''
         });
 
-        res.json({ success: true, imageUrl: `/temp/${outputFileName}` });
+        res.set('Content-Type', `image/${format || 'png'}`);
+        res.send(buffer);
     } catch (error) {
+        console.error('API Error:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -129,13 +124,10 @@ app.post('/convert/file', upload.single('htmlFile'), async (req, res) => {
         const { format, scale, smartCrop, smartCropPadding, width, dynamicMode, watermarkEnabled, watermarkText } = settings;
 
         const filePath = req.file.path;
-        const outputFileName = `${uuidv4()}.${format || 'png'}`;
-        const outputPath = path.join(tempDir, outputFileName);
 
-        await renderer.capture({
+        const buffer = await renderer.capture({
             input: filePath,
             inputType: 'file',
-            outputPath,
             format: format || 'png',
             scale: Number(scale) || 2,
             smartCrop: !!smartCrop,
@@ -149,8 +141,10 @@ app.post('/convert/file', upload.single('htmlFile'), async (req, res) => {
         // Cleanup uploaded file
         fs.unlinkSync(filePath);
 
-        res.json({ success: true, imageUrl: `/temp/${outputFileName}` });
+        res.set('Content-Type', `image/${format || 'png'}`);
+        res.send(buffer);
     } catch (error) {
+        console.error('API Error:', error);
         res.status(500).json({ error: error.message });
     }
 });
