@@ -1,53 +1,97 @@
-# HTML转图片工具
+# HTML2Image Pro (极致网页转图片工具)
 
-这是一个功能强大的工具，可以将HTML网页、HTML代码或HTML文件转换为高质量图片。无论是整个网页的截图，还是特定HTML代码的可视化效果，这个工具都能轻松实现。
+[![Deployment Status](https://img.shields.io/badge/Deployment-Docker%20Ready-blue)](DEPLOY.md)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## 功能特点
+**HTML2Image Pro** 是一款现代化的网页转图片工具，专为生成高质量、像素级完美的网页截图而设计。
 
-- **多种输入方式**：支持直接粘贴HTML代码、上传HTML文件或输入网页URL
-- **自定义视口宽度**：可以模拟不同设备（手机、平板、PC等）的显示效果
-- **高质量输出**：默认使用100%质量和完整页面截图
-- **智能尺寸适配**：即使页面很长，也能完美处理不会出现图片重复问题
-- **精确截图区域**：无论视口宽度如何设置，都只截取有实际内容的区域，不会有多余空白
-- **自动降低缩放比例**：针对特别长的页面，会自动调整缩放比例，避免浏览器限制带来的图片问题
+它基于 **Playwright** 渲染引擎，完美支持现代 CSS 特性、Web Fonts、Flexbox/Grid 布局以及 JavaScript 动态渲染（包括 React/Vue 应用）。
 
-## 使用说明
+![App Screenshot](assets/screenshot.png)
 
-1. **选择输入类型**：点击顶部选项卡，选择HTML代码、HTML文件或网页URL
-2. **输入内容**：根据所选类型，输入相应内容
-3. **设置输出格式**：选择PNG、JPG或WebP格式
-4. **高级设置**（可选）：
-   - 调整缩放比例：决定图片的清晰度（1-3倍）
-   - 视口宽度：选择模拟的设备宽度，如手机、平板或PC
-5. **点击转换**：等待片刻，系统将生成图片并显示在下方
-6. **查看和下载**：点击图片可查看大图，点击下载按钮可保存图片
+## ✨ 核心亮点
 
-## 技术实现
+### 🎨 极致渲染
+- **Playwright 引擎**：替代传统的 Puppeteer，提供更佳的兼容性和渲染精度。
+- **动态内容支持**：内置 **"完整加载模式" (Dynamic Mode)**，通过智能滚动和网络空闲检测，确保 Lazy Load 图片和动态组件完全加载后再截图。
+- **React 组件预览**：支持直接编写/粘贴 React 代码（支持 Lucide 图标库），实时预览并转换为图片。
 
-本工具使用以下技术：
-- Node.js和Express提供Web服务
-- Puppeteer实现网页渲染和截图
-- Sharp处理图像拼接和优化
-- 前端使用现代化UI设计，确保良好的用户体验
+### 🛠️ 强大的图像处理
+- **高达 8x 超清输出**：支持 1x (标准) 到 8x (印刷级) 的 DPI 缩放。
+- **智能裁剪 (Smart Crop)**：自动识别内容区域，去除多余留白，支持自定义边缘内边距 (Padding)。
+- **水印功能**：一键添加版权水印，支持自定义文字，自动添加阴影和半透明效果，适配深浅背景。
+- **多格式支持**：PNG (默认), JPG, WebP。
 
-## 本地安装和运行
+### 🖥️ 优秀的用户体验
+- **现代 UI 设计**：Glassmorphism (毛玻璃) 风格，支持 **深色模式 (Dark Mode)**（自动跟随系统）。
+- **历史记录**：自动保存最近转换记录（利用 LocalStorage），方便随时回溯和下载。
+- **多端模拟**：内置 iPhone, iPad, MacBook 等多种视口预设，一键模拟不同设备渲染效果。
+- **拖拽上传**：支持直接拖拽 .html 文件进行转换。
 
-1. 确保已安装Node.js环境
-2. 克隆或下载本项目
-3. 在项目目录下运行命令安装依赖：`npm install`
-4. 启动应用：`npm start`
-5. 打开浏览器访问：`http://localhost:3000`
+## 🚀 快速开始
 
-## 注意事项
+### 方式一：Docker 部署 (推荐)
 
-- 转换大型网页或复杂HTML可能需要较长时间
-- 对于某些需要登录或包含特殊交互的网页，可能无法正确获取完整内容
-- 转换的临时图片文件会在服务器上保存1小时后自动删除
+本项目已针对云原生环境优化，推荐使用 Docker 部署（如 Render, Railway）。
 
-## 更新日志
+```bash
+# 1. 构建镜像
+docker build -t html2image-pro .
 
-### 2025-05-10更新
-- 修复了长页面截图重复问题
-- 添加了视口宽度设置功能
-- 优化了UI界面和用户体验
-- 实现了智能区域截图，消除了宽视口下的多余空白问题
+# 2. 运行容器
+docker run -p 3015:3015 html2image-pro
+```
+
+详细部署指南请参考 [DEPLOY.md](DEPLOY.md)。
+
+### 方式二：本地运行
+
+需要 Node.js 16+ 环境。
+
+```bash
+# 1. 安装依赖
+npm install
+
+# 2. 安装浏览器内核
+npx playwright install chromium
+
+# 3. 启动服务
+npm start
+```
+
+访问 `http://localhost:3015` 即可使用。
+
+## 🛠️ 技术栈
+
+- **Core**: Node.js, Express
+- **Rendering**: Playwright (Chromium)
+- **Image Processing**: Sharp
+- **Frontend**: HTML5, Tailwind CSS, Vanilla JS
+- **Fonts**: Inter, JetBrains Mono (Code Optimized)
+
+## 📝 API 接口
+
+项目提供 RESTful API，可供第三方调用：
+
+- `POST /convert/url`: 转换在线网页
+- `POST /convert/html`: 转换 HTML 代码字符串
+- `POST /convert/file`: 转换上传的 HTML 文件
+
+**参数示例 (Body)**:
+```json
+{
+  "url": "https://example.com",
+  "settings": {
+    "format": "png",
+    "scale": 2,
+    "width": 1200,
+    "smartCrop": true,
+    "watermarkEnabled": true,
+    "watermarkText": "My Watermark"
+  }
+}
+```
+
+## 📄 License
+
+MIT License
