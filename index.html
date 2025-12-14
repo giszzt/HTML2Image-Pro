@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML2Image Pro - 极致网页转图片工具</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              200: '#ddd6fe',
+              300: '#c4b5fd',
+              400: '#a78bfa',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              800: '#5b21b6',
+              900: '#4c1d95',
+            }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script>
+    // Immediate theme check
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <!-- React & Babel Support -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons (Replaced by Internal Adapter) -->
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Background gradients for both modes */
+    /* Background gradients for both modes */
+    body {
+      background-color: #f8fafc;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
+    }
+
+    .dark body {
+      background-color: #0f172a;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+    }
+
+    body {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Glassmorphism panels */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    }
+
+    .dark .glass-panel {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    /* Inputs */
+    .glass-input {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(203, 213, 225, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .dark .glass-input {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+    }
+
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .dark .glass-input:focus {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+    }
+
+    /* Tabs */
+    .tab-active {
+      background: white;
+      color: #7c3aed;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+    }
+
+    .dark .tab-active {
+      background: #334155;
+      color: #c4b5fd;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Gradient Button */
+    .btn-gradient {
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    }
+
+    .dark .btn-gradient {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.5);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(107, 114, 128, 0.8);
+    }
+
+    /* Logo text enhancement for dark mode */
+    .dark .logo-text {
+      text-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen transition-colors duration-300 text-slate-800 dark:text-slate-100">
+
+  <!-- Navbar -->
+  <nav class="w-full py-6 px-4 md:px-8 flex justify-between items-center max-w-7xl mx-auto relative z-10">
+    <div class="flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+        <i class="fas fa-camera"></i>
+      </div>
+      <span
+        class="logo-text text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300">HTML2Image
+        Pro</span>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- History Toggle -->
+      <button id="history-toggle"
+        class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 dark:bg-slate-800/50 dark:hover:bg-slate-700/50 flex items-center justify-center transition-all text-slate-600 dark:text-slate-300 border border-transparent dark:border-slate-700 relative">
+        <i class="fas fa-history"></i>
+        <span id="history-count"
+          class="hidden absolute -top-1 -right-1 w-5 h-5 bg-brand-500 text-white text-xs rounded-full flex items-center justify-center font-bold">0</span>
+      </button>
+
+      <!-- Theme Toggle -->
+      <button id="theme-toggle"
+        class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 dark:bg-slate-800/50 dark:hover:bg-slate-700/50 flex items-center justify-center transition-all text-slate-600 dark:text-yellow-300 border border-transparent dark:border-slate-700">
+        <i class="fas fa-sun hidden dark:block"></i>
+        <i class="fas fa-moon block dark:hidden"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8 max-w-5xl relative z-10">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-slate-900 dark:text-white">
+        网页转图片，<span
+          class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-blue-600 dark:from-brand-400 dark:to-blue-400">从未如此清晰</span>
+      </h1>
+      <p class="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+        新一代渲染引擎，完美支持 React、动态内容、Lazy Load 和现代 CSS 特性。
+        <br class="hidden md:block">所见即所得，像素级完美还原。
+      </p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="glass-panel rounded-3xl p-1 md:p-2 shadow-2xl mb-12">
+      <div class="bg-white/50 dark:bg-slate-900/50 rounded-[20px] p-6 md:p-8 backdrop-blur-sm">
+
+        <!-- Tabs -->
+        <div class="flex justify-center mb-8">
+          <div class="bg-slate-100/80 dark:bg-slate-800/80 p-1.5 rounded-2xl inline-flex relative">
+            <button id="htmlcode-tab"
+              class="tab-btn tab-active px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-2">
+              <i class="fas fa-code"></i> HTML
+            </button>
+            <button id="htmlfile-tab"
+              class="tab-btn px-6 py-2.5 rounded-xl text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all duration-300 flex items-center gap-2">
+              <i class="fas fa-file-code"></i> 文件
+            </button>
+            <button id="webpage-tab"
+              class="tab-btn px-6 py-2.5 rounded-xl text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all duration-300 flex items-center gap-2">
+              <i class="fas fa-globe"></i> 网址
+            </button>
+            <button id="react-tab"
+              class="tab-btn px-6 py-2.5 rounded-xl text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all duration-300 flex items-center gap-2">
+              <i class="fab fa-react text-blue-400"></i> React
+            </button>
+          </div>
+        </div>
+
+        <!-- Content Areas -->
+        <div id="tab-content" class="min-h-[300px]">
+
+          <!-- HTML Code Input (Default) -->
+          <div id="content-htmlcode" class="tab-content transition-all duration-300">
+            <div class="relative group">
+              <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-brand-300 to-blue-300 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500">
+              </div>
+              <textarea id="html-code"
+                class="relative w-full h-64 p-6 rounded-xl glass-input font-mono text-sm text-slate-700 dark:text-slate-200 resize-none outline-none placeholder-slate-400 dark:placeholder-slate-500"
+                placeholder="在此粘贴您的 HTML 代码..."></textarea>
+              <div class="absolute bottom-4 right-4 flex gap-2">
+                <button id="example-btn"
+                  class="text-xs px-3 py-1.5 bg-slate-200/80 dark:bg-slate-700/80 hover:bg-slate-300/80 dark:hover:bg-slate-600/80 rounded-lg text-slate-600 dark:text-slate-300 transition font-medium">加载示例</button>
+                <button id="clear-btn"
+                  class="text-xs px-3 py-1.5 bg-slate-200/80 dark:bg-slate-700/80 hover:bg-slate-300/80 dark:hover:bg-slate-600/80 rounded-lg text-slate-600 dark:text-slate-300 transition font-medium">清空</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- File Upload -->
+          <div id="content-htmlfile" class="tab-content hidden">
+            <div
+              class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-12 flex flex-col items-center justify-center text-center hover:border-brand-400 dark:hover:border-brand-500 hover:bg-brand-50/50 dark:hover:bg-brand-900/20 transition-all cursor-pointer group"
+              id="drop-zone">
+              <div
+                class="w-16 h-16 bg-brand-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-cloud-upload-alt text-2xl text-brand-500 dark:text-brand-400"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-2">点击或拖拽上传 HTML 文件</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-sm mb-6">支持 .html, .htm 格式</p>
+              <button
+                class="px-6 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:shadow-md transition-all">选择文件</button>
+              <input type="file" id="html-file" accept=".html,.htm" class="hidden">
+              <p id="file-name" class="mt-4 text-sm font-medium text-brand-600 dark:text-brand-400"></p>
+            </div>
+          </div>
+
+          <!-- URL Input -->
+          <div id="content-webpage" class="tab-content hidden">
+            <div class="max-w-2xl mx-auto pt-8">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 ml-1">网页链接</label>
+              <div class="relative flex items-center">
+                <i class="fas fa-link absolute left-4 text-slate-400"></i>
+                <input type="url" id="webpage-url"
+                  class="w-full pl-11 pr-4 py-4 rounded-xl glass-input text-slate-700 dark:text-slate-200 outline-none placeholder-slate-400 dark:placeholder-slate-500"
+                  placeholder="https://example.com">
+              </div>
+              <p class="mt-3 text-xs text-slate-400 dark:text-slate-500 ml-1"><i class="fas fa-info-circle mr-1"></i>
+                支持动态渲染和懒加载内容</p>
+            </div>
+          </div>
+
+          <!-- React Code Input -->
+          <div id="content-react" class="tab-content hidden">
+            <div class="flex flex-col">
+              <div class="relative group flex flex-col">
+                <label class="text-xs font-bold text-slate-500 mb-2 ml-1">React 代码 (支持 Lucide 图标)</label>
+                <div
+                  class="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-brand-400 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500">
+                </div>
+                <textarea id="react-code"
+                  class="relative w-full h-[400px] p-6 rounded-xl glass-input font-mono text-sm text-slate-700 dark:text-slate-200 resize-none outline-none placeholder-slate-400 dark:placeholder-slate-500"
+                  placeholder="import React from 'react';&#10;import { Wind } from 'lucide-react';&#10;&#10;const App = () => (&#10;  <div className='p-4 bg-white rounded shadow'>&#10;    <Wind /> Hello React&#10;  </div>&#10;);&#10;&#10;export default App;"></textarea>
+              </div>
+              <div id="react-hidden-root"
+                class="fixed -left-[9999px] top-0 w-[1200px] h-[800px] overflow-hidden bg-white"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Controls -->
+        <div
+          class="mt-8 pt-8 border-t border-slate-200/60 dark:border-slate-700/60 flex flex-col md:flex-row items-center justify-between gap-6">
+
+          <!-- Settings Toggles -->
+          <div class="flex items-center gap-4 w-full md:w-auto">
+            <div class="relative group">
+              <select id="output-format"
+                class="appearance-none bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 pl-4 pr-10 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 outline-none cursor-pointer transition-colors border border-transparent dark:border-slate-700">
+                <option value="png">PNG 格式</option>
+                <option value="jpg">JPG 格式</option>
+                <option value="webp">WebP 格式</option>
+              </select>
+              <i
+                class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none"></i>
+            </div>
+
+            <button id="settings-btn"
+              class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <i class="fas fa-sliders-h"></i> 高级设置
+            </button>
+          </div>
+
+          <!-- Action Button -->
+          <button id="convert-btn"
+            class="btn-gradient w-full md:w-auto px-8 py-3.5 rounded-xl text-white font-semibold shadow-lg shadow-brand-500/30 flex items-center justify-center gap-3 group">
+            <span>开始转换</span>
+            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </button>
+        </div>
+
+        <!-- Advanced Settings Panel -->
+        <div id="settings-panel"
+          class="hidden mt-6 p-6 bg-slate-50/80 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label
+                class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">图片清晰度</label>
+              <div class="relative">
+                <select id="scale-slider"
+                  class="w-full appearance-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 py-2.5 pl-4 pr-10 rounded-xl text-sm outline-none focus:border-brand-400 transition-colors">
+                  <option value="1">标准 (1x)</option>
+                  <option value="2" selected>高清 (2x) ⭐推荐</option>
+                  <option value="4">超高清 (4x)</option>
+                  <option value="8">印刷级 (8x)</option>
+                </select>
+                <i
+                  class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
+              </div>
+            </div>
+            <div>
+              <label
+                class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">视口宽度</label>
+              <div class="relative">
+                <select id="viewport-width"
+                  class="w-full appearance-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 py-2.5 pl-4 pr-10 rounded-xl text-sm outline-none focus:border-brand-400 transition-colors">
+                  <option value="">自动 (默认)</option>
+                  <option value="375">iPhone SE (375px)</option>
+                  <option value="414">iPhone Max (414px)</option>
+                  <option value="768">iPad Mini (768px)</option>
+                  <option value="1024">iPad Pro (1024px)</option>
+                  <option value="1440">Macbook (1440px)</option>
+                  <option value="1920">Full HD (1920px)</option>
+                </select>
+                <i
+                  class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
+              </div>
+            </div>
+
+            <!-- Dynamic Mode Toggle -->
+            <div
+              class="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 h-[74px]">
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <i class="fas fa-spinner"></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-medium text-slate-700 dark:text-slate-200">完整加载模式</span>
+                  <span class="text-xs text-slate-400 dark:text-slate-500">网页/动态内容需开启</span>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="dynamic-mode" class="sr-only peer">
+                <div
+                  class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                </div>
+              </label>
+            </div>
+
+            <!-- Smart Crop -->
+            <div
+              class="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 h-[74px]">
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                  <i class="fas fa-crop-alt"></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-medium text-slate-700 dark:text-slate-200">智能裁剪</span>
+                  <select id="smart-crop-padding"
+                    class="text-xs mt-1 bg-slate-100 dark:bg-slate-700 border-none rounded px-1 py-0.5 text-slate-600 dark:text-slate-300 focus:ring-0 cursor-pointer">
+                    <option value="0" selected>边距 0px</option>
+                    <option value="1">边距 1px</option>
+                    <option value="5">边距 5px</option>
+                    <option value="10">边距 10px</option>
+                    <option value="20">边距 20px</option>
+                    <option value="30">边距 30px</option>
+                  </select>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="smart-crop" class="sr-only peer">
+                <div
+                  class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600">
+                </div>
+              </label>
+            </div>
+
+            <!-- Watermark -->
+            <div
+              class="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 col-span-full">
+              <div class="flex items-center gap-2 flex-1">
+                <div
+                  class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <i class="fas fa-copyright"></i>
+                </div>
+                <div class="flex flex-col flex-1">
+                  <span class="text-sm font-medium text-slate-700 dark:text-slate-200">水印</span>
+                  <input type="text" id="watermark-text"
+                    class="text-xs mt-1 bg-slate-100 dark:bg-slate-700 border-none rounded px-2 py-1 text-slate-600 dark:text-slate-300 focus:ring-0 w-40 disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="输入水印文字..." disabled>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer ml-4">
+                <input type="checkbox" id="watermark-toggle" class="sr-only peer">
+                <div
+                  class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 dark:peer-focus:ring-emerald-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-600">
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-section"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+      <div class="text-center">
+        <div class="relative w-24 h-24 mx-auto mb-6">
+          <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full"></div>
+          <div class="absolute inset-0 border-4 border-brand-500 rounded-full border-t-transparent animate-spin"></div>
+          <i
+            class="fas fa-magic absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl text-brand-500 animate-pulse"></i>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">正在施展魔法...</h3>
+        <p class="text-slate-500 dark:text-slate-400">正在渲染高精度图像，请稍候</p>
+      </div>
+    </div>
+
+    <!-- Result Section -->
+    <div id="result-container" class="hidden opacity-0 transition-all duration-500 transform translate-y-10">
+      <div class="glass-panel rounded-3xl p-1 md:p-2 shadow-2xl">
+        <div class="bg-white/80 dark:bg-slate-900/80 rounded-[20px] p-6 md:p-8 backdrop-blur-md">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <i class="fas fa-check-circle text-green-500"></i> 转换成功
+              </h3>
+              <span id="image-info"
+                class="text-xs text-slate-400 dark:text-slate-500 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded"></span>
+            </div>
+            <div class="flex gap-2">
+              <button id="copy-image-btn"
+                class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
+                <i class="far fa-image"></i> 复制图片
+              </button>
+              <button id="copy-btn"
+                class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
+                <i class="far fa-copy"></i> 复制链接
+              </button>
+              <a id="download-btn" download
+                class="px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-medium hover:bg-brand-700 transition-colors flex items-center gap-2 shadow-lg shadow-brand-500/20">
+                <i class="fas fa-download"></i> 下载
+              </a>
+            </div>
+          </div>
+
+          <div
+            class="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-inner bg-slate-50 dark:bg-slate-800">
+            <div
+              class="absolute inset-0 bg-black/0 group-hover:bg-black/5 dark:group-hover:bg-white/5 transition-colors z-10 flex items-center justify-center cursor-zoom-in"
+              id="zoom-trigger">
+              <span
+                class="opacity-0 group-hover:opacity-100 bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-full text-sm font-medium text-slate-700 dark:text-slate-200 shadow-lg transform scale-90 group-hover:scale-100 transition-all">
+                <i class="fas fa-search-plus mr-2"></i>点击放大
+              </span>
+            </div>
+            <img id="result-image" class="w-full h-auto block" alt="Result">
+          </div>
+
+          <div class="mt-6 text-center">
+            <button id="new-convert-btn"
+              class="text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 text-sm font-medium transition-colors">
+              <i class="fas fa-redo mr-1"></i> 开始新的转换
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- History Sidebar -->
+  <div id="history-sidebar"
+    class="fixed inset-y-0 right-0 w-80 bg-white dark:bg-slate-900 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-out">
+    <div class="flex flex-col h-full">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+          <i class="fas fa-history text-brand-500"></i> 历史记录
+        </h3>
+        <button id="close-history"
+          class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-500 transition-colors">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- List -->
+      <div id="history-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+        <!-- History items will be inserted here -->
+        <div class="text-center text-slate-400 dark:text-slate-500 py-8">
+          <i class="fas fa-inbox text-3xl mb-3 opacity-50"></i>
+          <p class="text-sm">暂无历史记录</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+        <button id="clear-history"
+          class="w-full py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+          <i class="fas fa-trash-alt mr-1"></i> 清空历史
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Overlay -->
+  <div id="history-overlay" class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300">
+  </div>
+
+  <!-- Image Modal -->
+  <div id="image-modal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-md transition-opacity opacity-0" id="modal-backdrop">
+    </div>
+    <div class="absolute inset-0 overflow-auto flex items-center justify-center p-4 md:p-8" id="modal-container">
+      <img id="modal-image"
+        class="max-w-full h-auto rounded shadow-2xl transform scale-95 transition-transform duration-300"
+        alt="Full size">
+      <button id="close-modal"
+        class="fixed top-6 right-6 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full text-white flex items-center justify-center transition-colors backdrop-blur-sm">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Theme Toggle Logic
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      const body = document.body;
+
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+      }
+
+      themeToggle.addEventListener('click', () => {
+        if (html.classList.contains('dark')) {
+          html.classList.remove('dark');
+          localStorage.theme = 'light';
+        } else {
+          html.classList.add('dark');
+          localStorage.theme = 'dark';
+        }
+      });
+
+      // ============ History Management ============
+      const historySidebar = document.getElementById('history-sidebar');
+      const historyOverlay = document.getElementById('history-overlay');
+      const historyToggle = document.getElementById('history-toggle');
+      const closeHistory = document.getElementById('close-history');
+      const clearHistoryBtn = document.getElementById('clear-history');
+      const historyList = document.getElementById('history-list');
+      const historyCount = document.getElementById('history-count');
+
+      const MAX_HISTORY = 10;
+
+      function getHistory() {
+        try {
+          return JSON.parse(localStorage.getItem('imageHistory') || '[]');
+        } catch { return []; }
+      }
+
+      function saveHistory(items) {
+        localStorage.setItem('imageHistory', JSON.stringify(items.slice(0, MAX_HISTORY)));
+        updateHistoryUI();
+      }
+
+      function addToHistory(imageUrl, timestamp = Date.now()) {
+        const items = getHistory();
+        items.unshift({ url: imageUrl, time: timestamp });
+        saveHistory(items);
+      }
+
+      function updateHistoryUI() {
+        const items = getHistory();
+        const count = items.length;
+
+        // Update badge
+        if (count > 0) {
+          historyCount.textContent = count;
+          historyCount.classList.remove('hidden');
+        } else {
+          historyCount.classList.add('hidden');
+        }
+
+        // Update list
+        if (count === 0) {
+          historyList.innerHTML = `
+            <div class="text-center text-slate-400 dark:text-slate-500 py-8">
+              <i class="fas fa-inbox text-3xl mb-3 opacity-50"></i>
+              <p class="text-sm">暂无历史记录</p>
+            </div>`;
+          return;
+        }
+
+        historyList.innerHTML = items.map((item, i) => `
+          <div class="group relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-brand-400 transition-colors cursor-pointer" data-index="${i}">
+            <img src="${item.url}" class="w-full h-24 object-cover bg-slate-100 dark:bg-slate-800" loading="lazy">
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <span class="text-white text-xs font-medium"><i class="fas fa-eye mr-1"></i>查看</span>
+            </div>
+            <div class="absolute bottom-1 right-1 text-xs text-white/80 bg-black/50 px-1.5 py-0.5 rounded">
+              ${new Date(item.time).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+            </div>
+          </div>
+        `).join('');
+
+        // Click handler for history items
+        historyList.querySelectorAll('[data-index]').forEach(el => {
+          el.addEventListener('click', () => {
+            const item = items[parseInt(el.dataset.index)];
+            if (item) {
+              window.open(item.url, '_blank');
+            }
+          });
+        });
+      }
+
+      function openHistorySidebar() {
+        historySidebar.classList.remove('translate-x-full');
+        historyOverlay.classList.remove('hidden');
+        setTimeout(() => historyOverlay.classList.add('opacity-100'), 10);
+      }
+
+      function closeHistorySidebar() {
+        historySidebar.classList.add('translate-x-full');
+        historyOverlay.classList.remove('opacity-100');
+        setTimeout(() => historyOverlay.classList.add('hidden'), 300);
+      }
+
+      historyToggle.addEventListener('click', openHistorySidebar);
+      closeHistory.addEventListener('click', closeHistorySidebar);
+      historyOverlay.addEventListener('click', closeHistorySidebar);
+
+      clearHistoryBtn.addEventListener('click', () => {
+        if (confirm('确定清空所有历史记录吗？')) {
+          localStorage.removeItem('imageHistory');
+          updateHistoryUI();
+        }
+      });
+
+      // Initialize history UI
+      updateHistoryUI();
+
+      // Tab Switching
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+          tabBtns.forEach(b => {
+            b.classList.remove('tab-active', 'text-brand-600');
+            b.classList.add('text-slate-500', 'dark:text-slate-400');
+          });
+          tabContents.forEach(c => c.classList.add('hidden'));
+
+          this.classList.remove('text-slate-500', 'dark:text-slate-400');
+          this.classList.add('tab-active');
+
+          const contentId = 'content-' + this.id.split('-')[0];
+          document.getElementById(contentId).classList.remove('hidden');
+        });
+      });
+
+      // React Preview Logic
+      const reactCodeArea = document.getElementById('react-code');
+      // --- React Conversion Logic (Background) ---
+      // We render the React component into a hidden container to get the final HTML
+      async function renderReactToHtml(code) {
+        return new Promise((resolve, reject) => {
+          // Temporarily capture console.error
+          const originalConsoleError = console.error;
+          console.error = (...args) => {
+            originalConsoleError.apply(console, args);
+            const errorMsg = args.map(arg =>
+              arg instanceof Error ? arg.message : String(arg)
+            ).join(' ');
+            reject(new Error(`React Runtime Error: ${errorMsg}`));
+          };
+
+          try {
+            // 1. Basic Validation
+            if (!code.trim()) {
+              reject(new Error('React 代码不能为空'));
+              return;
+            }
+            if (!code.includes('export default')) {
+              reject(new Error('无法找到 export default 语句，请确保导出了组件'));
+              return;
+            }
+
+            // 2. Shim: Lucide -> FontAwesome Adapter
+            const faMap = {
+              'Wind': 'fa-wind', 'Box': 'fa-cube', 'Droplet': 'fa-tint', 'Sprout': 'fa-seedling',
+              'Activity': 'fa-heartbeat', 'Recycle': 'fa-recycle', 'Sun': 'fa-sun', 'Leaf': 'fa-leaf',
+              'Heart': 'fa-heart', 'ArrowDown': 'fa-arrow-down', 'ArrowRight': 'fa-arrow-right',
+              'ArrowLeft': 'fa-arrow-left', 'ArrowUp': 'fa-arrow-up', 'Check': 'fa-check',
+              'X': 'fa-times', 'Search': 'fa-search', 'User': 'fa-user', 'Home': 'fa-home',
+              'Settings': 'fa-cog', 'Menu': 'fa-bars', 'Calendar': 'fa-calendar', 'Clock': 'fa-clock',
+              'MapPin': 'fa-map-marker-alt', 'Phone': 'fa-phone', 'Mail': 'fa-envelope',
+              'Github': 'fa-github', 'Twitter': 'fa-twitter', 'Facebook': 'fa-facebook',
+              'Instagram': 'fa-instagram', 'Linkedin': 'fa-linkedin'
+            };
+
+            const createFAIcon = (name) => {
+              const Component = ({ className, size = 24, color, style, ...props }) => {
+                const faClass = faMap[name] || 'fa-icons';
+                const iconStyle = { fontSize: size + 'px', color: color, ...style };
+                return React.createElement('i', {
+                  className: `fas ${faClass} ${className || ''}`,
+                  style: iconStyle,
+                  ...props
+                });
+              };
+              Component.displayName = name;
+              return Component;
+            };
+
+            const icons = new Proxy({}, {
+              get: (target, prop) => {
+                if (prop === '__esModule') return true;
+                return createFAIcon(String(prop));
+              }
+            });
+
+            // 3. Process Code
+            let processedCode = code
+              .replace(/import\s+\{([^}]+)\}\s+from\s+['"]lucide-react['"];?/g, (match, content) => {
+                const vars = content.split(',').map(s => s.trim());
+                return `const { ${vars.join(', ')} } = icons;`;
+              })
+              .replace(/import\s+.*?from\s+['"].*?['"];?/g, '')
+              .replace(/export\s+default\s+(\w+);?/, 'renderComponent($1);');
+
+            // 4. Render Script
+            // Use a global variable to pass the icons proxy safely to the eval context
+            window.__ICONS_PROXY__ = icons;
+
+            const finalScript = `
+              const icons = window.__ICONS_PROXY__;
+              ${processedCode}
+              
+              function renderComponent(Component) {
+                const root = ReactDOM.createRoot(document.getElementById('react-hidden-root'));
+                root.render(React.createElement(Component));
+              }
+            `;
+
+            // 5. Execute with Babel
+            const transpiled = Babel.transform(finalScript, { presets: ['react', 'env'] }).code;
+
+            // Ensure the hidden root exists and is empty
+            let hiddenRoot = document.getElementById('react-hidden-root');
+            if (!hiddenRoot) {
+              hiddenRoot = document.createElement('div');
+              hiddenRoot.id = 'react-hidden-root';
+              hiddenRoot.style.display = 'none'; // Keep it hidden
+              document.body.appendChild(hiddenRoot);
+            }
+            hiddenRoot.innerHTML = ''; // Clear previous content
+
+            // Execute in a scope where 'icons' is available
+            (function () {
+              eval(transpiled);
+            }).call({ icons });
+
+            // 6. Wait for Render (React 18 is async)
+            setTimeout(() => {
+              const root = document.getElementById('react-hidden-root');
+              if (root && root.innerHTML) {
+                resolve(root.innerHTML);
+              } else {
+                reject(new Error('渲染结果为空'));
+              }
+              console.error = originalConsoleError; // Restore console.error
+            }, 500); // Short delay for React render cycle
+
+          } catch (e) {
+            console.error = originalConsoleError; // Restore console.error immediately on sync error
+            reject(e);
+          }
+        });
+      }
+
+      // File Upload Logic
+      const fileInput = document.getElementById('html-file');
+      const fileNameDisplay = document.getElementById('file-name');
+      const dropZone = document.getElementById('drop-zone');
+      const dropZoneBtn = dropZone.querySelector('button');
+
+      dropZoneBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+      });
+
+      dropZone.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', function () {
+        if (this.files.length > 0) {
+          fileNameDisplay.textContent = '✅ 已选择: ' + this.files[0].name;
+          dropZone.classList.add('border-brand-400', 'bg-brand-50/50', 'dark:bg-brand-900/30');
+        }
+      });
+
+      // Drag and Drop
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, false);
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => {
+          dropZone.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/30', 'scale-[1.02]');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => {
+          dropZone.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/30', 'scale-[1.02]');
+        }, false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+          fileInput.files = files;
+          fileNameDisplay.textContent = '✅ 已选择: ' + files[0].name;
+          dropZone.classList.add('border-brand-400', 'bg-brand-50/50', 'dark:bg-brand-900/30');
+        }
+      });
+
+      // Settings Toggle
+      const settingsBtn = document.getElementById('settings-btn');
+      const settingsPanel = document.getElementById('settings-panel');
+      settingsBtn.addEventListener('click', () => {
+        settingsPanel.classList.toggle('hidden');
+        settingsBtn.classList.toggle('text-brand-600');
+        settingsBtn.classList.toggle('bg-slate-100');
+        settingsBtn.classList.toggle('dark:bg-slate-800');
+      });
+
+      // Scale select (now a dropdown, no longer needs input listener)
+
+      // Smart Crop Toggle - Enable/disable padding select
+      const smartCropToggle = document.getElementById('smart-crop');
+      const smartCropPadding = document.getElementById('smart-crop-padding');
+
+      // Initial state
+      smartCropPadding.disabled = !smartCropToggle.checked;
+      smartCropPadding.classList.toggle('opacity-50', !smartCropToggle.checked);
+      smartCropPadding.classList.toggle('cursor-not-allowed', !smartCropToggle.checked);
+
+      smartCropToggle.addEventListener('change', function () {
+        smartCropPadding.disabled = !this.checked;
+        smartCropPadding.classList.toggle('opacity-50', !this.checked);
+        smartCropPadding.classList.toggle('cursor-not-allowed', !this.checked);
+      });
+
+      // Watermark Toggle - Enable/disable text input
+      const watermarkToggle = document.getElementById('watermark-toggle');
+      const watermarkText = document.getElementById('watermark-text');
+
+      watermarkToggle.addEventListener('change', function () {
+        watermarkText.disabled = !this.checked;
+        if (this.checked) {
+          watermarkText.focus();
+        }
+      });
+
+      // Example & Clear
+      const exampleBtn = document.getElementById('example-btn');
+      const clearBtn = document.getElementById('clear-btn');
+      const htmlCodeArea = document.getElementById('html-code');
+
+      if (exampleBtn) {
+        exampleBtn.addEventListener('click', () => {
+          htmlCodeArea.value = '<div style="padding: 40px; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); border-radius: 20px; color: white; font-family: sans-serif; text-align: center;">\n  <h1 style="font-size: 48px; margin-bottom: 20px;">Hello World</h1>\n  <p style="font-size: 24px; opacity: 0.9;">Generated with HTML2Image Pro</p>\n</div>';
+        });
+      }
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          htmlCodeArea.value = '';
+        });
+      }
+
+      // Convert Logic
+      const convertBtn = document.getElementById('convert-btn');
+      const loadingSection = document.getElementById('loading-section');
+      const resultContainer = document.getElementById('result-container');
+      const resultImage = document.getElementById('result-image');
+      const downloadBtn = document.getElementById('download-btn');
+      const copyBtn = document.getElementById('copy-btn'); // Added copyBtn declaration
+
+      convertBtn.addEventListener('click', async () => {
+        const originalText = convertBtn.innerHTML;
+        convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 转换中...';
+        convertBtn.disabled = true;
+        loadingSection.classList.remove('hidden');
+        resultContainer.classList.add('hidden', 'opacity-0', 'translate-y-10');
+
+        try {
+          const activeTab = document.querySelector('.tab-btn.tab-active').id.split('-')[0];
+          let endpoint = '/convert/url'; // Default endpoint
+          let body = {};
+          let response;
+
+          // Helper function to get settings
+          const getSettings = () => ({
+            fullPage: document.getElementById('full-page')?.checked || false,
+            width: parseInt(document.getElementById('viewport-width')?.value) || 1200, // Using viewport-width for consistency
+            scale: parseFloat(document.getElementById('scale-slider')?.value) || 2, // Using scale-slider for consistency
+            quality: parseInt(document.getElementById('quality')?.value) || 80,
+            format: document.getElementById('output-format')?.value || 'png', // Using output-format for consistency
+            delay: parseInt(document.getElementById('delay')?.value) || 0,
+            darkMode: document.getElementById('dark-mode')?.checked || false,
+            smartCrop: document.getElementById('smart-crop')?.checked || false,
+            smartCropPadding: parseInt(document.getElementById('smart-crop-padding')?.value) || 0,
+            dynamicMode: document.getElementById('dynamic-mode')?.checked || false,
+            watermarkEnabled: document.getElementById('watermark-toggle')?.checked || false,
+            watermarkText: document.getElementById('watermark-text')?.value || ''
+          });
+
+          const settings = getSettings();
+          console.log('🚀 [Frontend] Sending settings:', settings); // Debug log
+
+          if (activeTab === 'webpage') { // Renamed from 'url' to 'webpage' for consistency
+            const url = document.getElementById('webpage-url').value;
+            if (!url) throw new Error('请输入网页链接');
+            body = { url };
+          } else if (activeTab === 'htmlcode') { // Renamed from 'html' to 'htmlcode' for consistency
+            const html = htmlCodeArea.value;
+            if (!html) throw new Error('请输入 HTML 代码');
+            endpoint = '/convert/html';
+            body = { html };
+          } else if (activeTab === 'react') {
+            const code = reactCodeArea.value; // Using reactCodeArea for consistency
+            if (!code) throw new Error('请输入 React 代码');
+
+            // Render React to HTML in background
+            const renderedHtml = await renderReactToHtml(code);
+
+            // Wrap in a full HTML document with Tailwind and FontAwesome
+            const fullHtml = `
+              <!DOCTYPE html>
+              <html lang="zh-CN">
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <script src="https://cdn.tailwindcss.com"><\/script>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+                <style>
+                  body { font-family: 'Inter', sans-serif; }
+                </style>
+              </head>
+              <body>
+                ${renderedHtml}
+              </body>
+              </html>
+            `;
+
+            endpoint = '/convert/html';
+            body = { html: fullHtml };
+          } else if (activeTab === 'htmlfile') { // Renamed from 'file' to 'htmlfile' for consistency
+            const file = fileInput.files[0];
+            if (!file) throw new Error('请选择 HTML 文件');
+            endpoint = '/convert/file';
+            const formData = new FormData();
+            formData.append('htmlFile', file); // Changed from 'file' to 'htmlFile' for consistency
+
+            // Add other settings to FormData
+            const settings = getSettings();
+            formData.append('settings', JSON.stringify(settings));
+
+            response = await fetch(endpoint, {
+              method: 'POST',
+              body: formData
+            });
+
+            if (!response.ok) {
+              const err = await response.json();
+              throw new Error(err.error || '转换失败');
+            }
+
+            const data = await response.json();
+            // showResult(data.imageUrl); // Adapt to existing showResult logic
+            resultImage.src = data.imageUrl;
+            addToHistory(data.imageUrl); // Save to history
+            downloadBtn.href = data.imageUrl;
+            downloadBtn.download = `html2image-${Date.now()}.${settings.format}`;
+
+            loadingSection.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            setTimeout(() => {
+              resultContainer.classList.remove('opacity-0', 'translate-y-10');
+            }, 50);
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return; // Exit early for file upload
+          }
+
+          // Add settings for JSON requests
+          body.settings = getSettings();
+
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+
+          if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error || '转换失败');
+          }
+
+          const data = await response.json();
+          if (data.success && data.imageUrl) {
+            resultImage.src = data.imageUrl;
+            addToHistory(data.imageUrl); // Save to history
+            downloadBtn.href = data.imageUrl;
+            downloadBtn.download = `html2image-${Date.now()}.${body.settings.format}`;
+
+            loadingSection.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            // Trigger animation
+            setTimeout(() => {
+              resultContainer.classList.remove('opacity-0', 'translate-y-10');
+            }, 50);
+
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            throw new Error('返回数据格式错误');
+          }
+
+        } catch (error) {
+          loadingSection.classList.add('hidden');
+          alert('❌ ' + error.message);
+        } finally {
+          // Always reset button state
+          convertBtn.innerHTML = '<i class="fas fa-magic mr-2"></i> 开始转换';
+          convertBtn.disabled = false;
+        }
+      });
+
+      // New Convert
+      document.getElementById('new-convert-btn').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => {
+          resultContainer.classList.add('hidden', 'opacity-0', 'translate-y-10');
+        }, 500);
+      });
+
+      // Copy Link to Clipboard
+      document.getElementById('copy-btn').addEventListener('click', async () => {
+        try {
+          const url = window.location.origin + resultImage.src;
+          await navigator.clipboard.writeText(url);
+          const btn = document.getElementById('copy-btn');
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<i class="fas fa-check text-green-500"></i> 已复制';
+          setTimeout(() => btn.innerHTML = originalText, 2000);
+        } catch (err) {
+          alert('复制失败: ' + err);
+        }
+      });
+
+      // Copy Image to Clipboard
+      document.getElementById('copy-image-btn').addEventListener('click', async () => {
+        try {
+          const response = await fetch(resultImage.src);
+          const blob = await response.blob();
+          await navigator.clipboard.write([
+            new ClipboardItem({ [blob.type]: blob })
+          ]);
+          const btn = document.getElementById('copy-image-btn');
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<i class="fas fa-check text-green-500"></i> 已复制';
+          setTimeout(() => btn.innerHTML = originalText, 2000);
+        } catch (err) {
+          alert('复制图片失败: ' + err);
+        }
+      });
+
+      // Update image info when result loads
+      resultImage.addEventListener('load', async function () {
+        const infoEl = document.getElementById('image-info');
+        try {
+          const response = await fetch(this.src, { method: 'HEAD' });
+          const fileSize = response.headers.get('Content-Length');
+          const sizeText = fileSize ? formatFileSize(parseInt(fileSize)) : '';
+          infoEl.textContent = `${this.naturalWidth} × ${this.naturalHeight}${sizeText ? ' · ' + sizeText : ''}`;
+        } catch (e) {
+          infoEl.textContent = `${this.naturalWidth} × ${this.naturalHeight}`;
+        }
+      });
+
+      function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      }
+
+      // Modal Logic
+      const modal = document.getElementById('image-modal');
+      const modalImg = document.getElementById('modal-image');
+      const modalBackdrop = document.getElementById('modal-backdrop');
+      const zoomTrigger = document.getElementById('zoom-trigger');
+
+      function openModal() {
+        modalImg.src = resultImage.src;
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modalBackdrop.classList.remove('opacity-0');
+          modalImg.classList.remove('scale-95');
+          modalImg.classList.add('scale-100');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modalBackdrop.classList.add('opacity-0');
+        modalImg.classList.remove('scale-100');
+        modalImg.classList.add('scale-95');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 300);
+        document.body.style.overflow = '';
+      }
+
+      zoomTrigger.addEventListener('click', openModal);
+      document.getElementById('close-modal').addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target === modalBackdrop) closeModal();
+      });
+    });
+  </script>
+</body>
+
+</html>

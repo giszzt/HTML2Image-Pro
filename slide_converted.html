@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project ARES Slide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 p-4 flex items-center justify-center min-h-screen">
+
+    <!-- Slide Container - 16:9 Aspect Ratio Fixed -->
+    <div
+        class="w-full max-w-[1200px] aspect-video bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 relative">
+
+        <!-- Compact Header Section -->
+        <div class="bg-slate-900 px-8 py-5 flex justify-between items-center shrink-0">
+            <div>
+                <div class="flex items-center space-x-3 mb-1">
+                    <span
+                        class="px-2 py-0.5 bg-orange-500/20 text-orange-200 text-[10px] font-bold tracking-widest uppercase rounded border border-orange-400/30">
+                        Project ARES
+                    </span>
+                    <span class="text-slate-400 text-xs font-medium">2035 火星基地生命维持专项</span>
+                </div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">
+                    一种基于<span class="text-orange-400">闭环生物再生</span>的火星基地生态循环维持系统
+                </h1>
+            </div>
+            <!-- Abstract Decor -->
+            <div class="opacity-20 text-white">
+                <i class="fas fa-cube text-4xl"></i>
+            </div>
+        </div>
+
+        <!-- Main Content Grid - No Scrolling -->
+        <div class="flex-1 px-8 py-6 grid grid-cols-12 gap-6 bg-slate-50 overflow-hidden">
+
+            <!-- Left Column: Innovation Points (55% width) -->
+            <div class="col-span-7 flex flex-col h-full">
+                <div class="flex items-center space-x-2 mb-4 shrink-0 border-b border-slate-200 pb-2">
+                    <div class="h-5 w-1.5 bg-orange-600 rounded-full"></div>
+                    <h2 class="text-lg font-bold text-slate-800">核心创新点设想</h2>
+                </div>
+
+                <div class="flex-1 flex flex-col justify-between space-y-3">
+                    <!-- Innovation Card 1 -->
+                    <div
+                        class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-orange-500 flex-1 flex flex-col justify-center relative group">
+                        <div class="absolute right-2 top-2 text-5xl font-black text-slate-100 select-none -z-0">01</div>
+                        <div class="flex items-start space-x-3 relative z-10">
+                            <div class="p-2 bg-orange-50 rounded-lg shrink-0 mt-1">
+                                <i class="fas fa-wind w-5 h-5 text-orange-600 text-center"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">动态大气成分调节模块</h3>
+                                <p class="text-slate-600 text-xs leading-relaxed text-justify">
+                                    针对火星稀薄大气环境，构建<span
+                                        class="font-bold text-orange-700">“智能气体交换矩阵”</span>。通过分子筛技术实时分离二氧化碳，并结合电解水制氧，维持基地内
+                                    21% 氧气浓度稳态。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Innovation Card 2 -->
+                    <div
+                        class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-cyan-500 flex-1 flex flex-col justify-center relative group">
+                        <div class="absolute right-2 top-2 text-5xl font-black text-slate-100 select-none -z-0">02</div>
+                        <div class="flex items-start space-x-3 relative z-10">
+                            <div class="p-2 bg-cyan-50 rounded-lg shrink-0 mt-1">
+                                <i class="fas fa-tint w-5 h-5 text-cyan-600 text-center"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">99% 闭环水循环与净化网络</h3>
+                                <p class="text-slate-600 text-xs leading-relaxed text-justify">
+                                    建立基地全域水资源回收系统，将生活废水、尿液及空气冷凝水通过<span
+                                        class="font-bold text-cyan-700">“反渗透+生物膜”</span>双重过滤，实现饮用水级别的无限次循环利用。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Innovation Card 3 -->
+                    <div
+                        class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-emerald-500 flex-1 flex flex-col justify-center relative group">
+                        <div class="absolute right-2 top-2 text-5xl font-black text-slate-100 select-none -z-0">03</div>
+                        <div class="flex items-start space-x-3 relative z-10">
+                            <div class="p-2 bg-emerald-50 rounded-lg shrink-0 mt-1">
+                                <i class="fas fa-seedling w-5 h-5 text-emerald-600 text-center"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">基因编辑作物生长控制</h3>
+                                <p class="text-slate-600 text-xs leading-relaxed text-justify">
+                                    提出“土壤改良 → 种子优选 → 气培种植”链路。利用<span
+                                        class="font-bold text-emerald-700">CRISPR技术</span>改造作物耐盐碱性，利用火星原位土壤实现碳水化合物的自给自足。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Process Flow (45% width) -->
+            <div class="col-span-5 flex flex-col h-full">
+                <div class="flex items-center space-x-2 mb-4 shrink-0 border-b border-slate-200 pb-2">
+                    <div class="h-5 w-1.5 bg-slate-400 rounded-full"></div>
+                    <h2 class="text-lg font-bold text-slate-800">系统运行流程</h2>
+                </div>
+
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex-1 relative overflow-hidden">
+                    <!-- Background curve decoration -->
+                    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-orange-50 rounded-full -z-0"></div>
+
+                    <div class="relative h-full flex flex-col justify-between z-10">
+                        <!-- Center Line -->
+                        <div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-slate-100 -z-10"></div>
+
+                        <!-- Step 1 -->
+                        <div class="flex items-center group">
+                            <div
+                                class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:border-slate-400 transition-colors">
+                                <i class="fas fa-heartbeat text-slate-500 text-sm"></i>
+                            </div>
+                            <div class="ml-3 bg-slate-50 border border-slate-100 p-2.5 rounded w-full shadow-sm">
+                                <p class="font-bold text-xs text-slate-700">基地环境数据实时监测与采集</p>
+                            </div>
+                        </div>
+
+                        <div class="pl-[14px] opacity-40"><i class="fas fa-arrow-down text-slate-300 text-xs"></i></div>
+
+                        <!-- Step 2 -->
+                        <div class="flex items-center group">
+                            <div
+                                class="w-10 h-10 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:border-orange-300 transition-colors">
+                                <i class="fas fa-recycle text-orange-600 text-sm"></i>
+                            </div>
+                            <div class="ml-3 bg-orange-50/30 border border-orange-100 p-2.5 rounded w-full shadow-sm">
+                                <p class="font-bold text-xs text-slate-700">有机废物回收与微生物分解处理</p>
+                            </div>
+                        </div>
+
+                        <div class="pl-[14px] opacity-40"><i class="fas fa-arrow-down text-slate-300 text-xs"></i></div>
+
+                        <!-- Step 3 -->
+                        <div class="flex items-center group">
+                            <div
+                                class="w-10 h-10 rounded-full bg-cyan-50 border border-cyan-100 flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:border-cyan-300 transition-colors">
+                                <i class="fas fa-sun text-cyan-600 text-sm"></i>
+                            </div>
+                            <div class="ml-3 bg-cyan-50/30 border border-cyan-100 p-2.5 rounded w-full shadow-sm">
+                                <p class="font-bold text-xs text-slate-700">营养液智能配比与光照节律优化</p>
+                            </div>
+                        </div>
+
+                        <div class="pl-[14px] opacity-40"><i class="fas fa-arrow-down text-slate-300 text-xs"></i></div>
+
+                        <!-- Step 4 -->
+                        <div class="flex items-center group">
+                            <div
+                                class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:border-emerald-300 transition-colors">
+                                <i class="fas fa-leaf text-emerald-600 text-sm"></i>
+                            </div>
+                            <div class="ml-3 bg-emerald-50/30 border border-emerald-100 p-2.5 rounded w-full shadow-sm">
+                                <p class="font-bold text-xs text-slate-700">生物量高效产出与氧气再生循环</p>
+                            </div>
+                        </div>
+
+                        <div class="pl-[14px] opacity-40"><i class="fas fa-arrow-down text-slate-300 text-xs"></i></div>
+
+                        <!-- Step 5 -->
+                        <div class="flex items-center">
+                            <div
+                                class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-800 flex items-center justify-center shrink-0 z-10 shadow-md">
+                                <i class="fas fa-heart text-red-400 text-sm"></i>
+                            </div>
+                            <div class="ml-3 bg-slate-800 p-2.5 rounded w-full shadow-md">
+                                <p class="font-bold text-xs text-white text-center">维持基地全员生命体征稳态</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

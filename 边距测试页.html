@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新生儿与产妇采购清单</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF9D9D, #FF6B8B);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: white;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .content {
+            padding: 20px 30px 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .section-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .hospital {
+            background-color: #6B7BFF;
+        }
+
+        .home {
+            background-color: #6BCB77;
+        }
+
+        .section-content {
+            padding: 0;
+            background-color: white;
+        }
+
+        .subsection {
+            padding: 0;
+            margin-bottom: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .subsection:last-child {
+            border-bottom: none;
+        }
+
+        .subsection-header {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            background-color: #f8f8f8;
+            border-left: 5px solid;
+        }
+
+        .mom {
+            border-left-color: #FF6B8B;
+        }
+
+        .baby {
+            border-left-color: #6B7BFF;
+        }
+
+        .nanny {
+            border-left-color: #FFB26B;
+        }
+
+        .family {
+            border-left-color: #6BCB77;
+        }
+
+        .item-list {
+            padding: 15px 20px 15px 40px;
+        }
+
+        .item-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .item-list li::before {
+            content: "•";
+            position: absolute;
+            left: -20px;
+            color: #888;
+        }
+
+        .item-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .important {
+            color: #FF4757;
+            font-weight: 600;
+        }
+
+        .category {
+            font-weight: 600;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .category:first-child {
+            margin-top: 0;
+        }
+
+        .note {
+            font-size: 14px;
+            color: #888;
+            font-style: italic;
+        }
+
+        .tip-box {
+            background-color: #FFF4E5;
+            border-left: 4px solid #FFB26B;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip-title {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #F29339;
+            margin-bottom: 8px;
+        }
+
+        .tip-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .flex-container {
+                display: flex;
+                flex-wrap: wrap;
+                margin: 0 -10px;
+            }
+
+            .flex-item {
+                flex: 1;
+                min-width: 300px;
+                margin: 0 10px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>新生儿与产妇采购清单</h1>
+            <p>待产及月子期间必备物品一览</p>
+        </div>
+
+        <div class="content">
+            <div class="tip-box">
+                <div class="tip-title">
+                    <span class="tip-icon">💡</span>
+                    <span>温馨提示</span>
+                </div>
+                <p>✅ 标记的物品为重要必备物品，请优先准备</p>
+                <p>妈妈和宝宝的物品请分开打包，并写好名字，方便使用</p>
+            </div>
+
+            <div class="section">
+                <div class="section-header hospital">
+                    <span class="section-icon">🏥</span>
+                    <span>1. 医院分娩篇</span>
+                </div>
+
+                <div class="section-content">
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <div class="subsection">
+                                <div class="subsection-header mom">妈妈👩包</div>
+                                <div class="item-list">
+                                    <div class="category">证件类：</div>
+                                    <ul>
+                                        <li class="important">✅生育保险凭证&产检病例、身份证（夫妻）、医保卡</li>
+                                    </ul>
+
+                                    <div class="category">其他类：</div>
+                                    <ul>
+                                        <li class="important">✅胎监带</li>
+                                        <li>洗漱用品（折叠脸盆、牙刷牙膏、毛巾✖️2）</li>
+                                        <li>拖鞋、水杯（另带5-10根吸管）、棉质睡衣✖️2</li>
+                                        <li>计血量型卫生巾XL15片</li>
+                                        <li>产褥垫90*60的，不少于10张；60*150，5张<span class="note">（可选小卖部待产包）</span></li>
+                                        <li>能量包：面包、蛋糕、八宝粥、宝矿力</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-item">
+                            <div class="subsection">
+                                <div class="subsection-header baby">宝宝🍼包</div>
+                                <div class="item-list">
+                                    <ul>
+                                        <li>打底衣1件(可以上衣，也可以连体衣)</li>
+                                        <li>包被1件</li>
+                                        <li>被子1件<span class="note">(如果包被不薄，可不带)</span></li>
+                                        <li>帽子1顶<span class="note">(如果包被有带帽子，可不带)</span></li>
+                                        <li>润肤油1瓶(抚触油)</li>
+                                        <li>一次性密齿小梳子1把</li>
+                                        <li>NB纸尿裤2个</li>
+                                        <li>干纸巾、湿纸巾各1包</li>
+                                        <li>柔棉巾1包<span class="note">(干湿两用，不是必须)</span></li>
+                                        <li>宝宝专用小杯子、小勺子</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <div class="subsection-header">病房</div>
+                        <div class="flex-container">
+                            <div class="flex-item">
+                                <div class="subsection">
+                                    <div class="subsection-header mom">妈妈👩需要的</div>
+                                    <div class="item-list">
+                                        <ul>
+                                            <li>吸奶器（娃吸为主，辅助开奶）、乳头羊脂（美德乐）</li>
+                                            <li>冷敷贴、止痛栓（双氯芬酸）、暖宫贴</li>
+                                            <li>日用品：一次性内裤、一次性马桶垫；会阴冲洗器</li>
+                                            <li>计量型卫生巾（成人纸尿裤）7片</li>
+                                            <li class="important">✅蜂蜜露（预防便秘）</li>
+                                            <li>刀纸、哺乳内衣、月子帽、袜子</li>
+                                            <li>恒温烧水壶？</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex-item">
+                                <div class="subsection">
+                                    <div class="subsection-header baby">宝宝🍼需要的</div>
+                                    <div class="item-list">
+                                        <ul>
+                                            <li>NB纸尿裤～40片</li>
+                                            <li>湿纸巾大包</li>
+                                            <li>打底衣2-3件</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header home">
+                    <span class="section-icon">🏠</span>
+                    <span>2. 居家月子篇</span>
+                </div>
+
+                <div class="section-content">
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <div class="subsection">
+                                <div class="subsection-header mom">宝妈</div>
+                                <div class="item-list">
+                                    <ul>
+                                        <li>月子帽、袜子</li>
+                                        <li>月子煮水桶、艾草生姜</li>
+                                        <li>恒温烧水壶</li>
+                                        <li>刀纸</li>
+                                        <li>一次性内裤不少于30条</li>
+                                        <li>防溢乳垫</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-item">
+                            <div class="subsection">
+                                <div class="subsection-header baby">宝宝</div>
+                                <div class="item-list">
+                                    <ul>
+                                        <li>奶粉、奶瓶、清洗刷（160、240各1）</li>
+                                        <li>伊可新AD（15天后）</li>
+                                        <li>尿布、纸尿裤、婴儿纸巾</li>
+                                        <li>隔尿垫（德佑或医用护理成人/术后）</li>
+                                        <li>澡盆、毛巾、纱布、肚脐贴</li>
+                                        <li>洗发沐浴露（松达）</li>
+                                        <li>护臀膏、贝亲桃叶水、面霜（松达）</li>
+                                        <li>洗鼻器（细棉棒带扣耳勺？）</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <div class="subsection">
+                                <div class="subsection-header nanny">月嫂</div>
+                                <div class="item-list">
+                                    <ul>
+                                        <li>行为规范</li>
+                                        <li>安装宝宝监护、摄像头</li>
+                                        <li>工作日志本、定期汇报</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-item">
+                            <div class="subsection">
+                                <div class="subsection-header family">家人</div>
+                                <div class="item-list">
+                                    <ul>
+                                        <li>熟练掌握海姆立克急救（张贴示意图）</li>
+                                        <li>给予宝妈全力支持</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
