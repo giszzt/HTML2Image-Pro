@@ -253,6 +253,15 @@ class PlaywrightRenderer {
                 `
             });
 
+            // ============ Wait for Fonts to Load ============
+            console.log('🔤 Waiting for fonts to load...');
+            try {
+                await page.evaluate(() => document.fonts.ready);
+                console.log('✅ Fonts loaded');
+            } catch (e) {
+                console.log('⚠️ Font loading check failed, proceeding anyway');
+            }
+
             // ============ DYNAMIC MODE: Full processing for complex pages ============
             if (dynamicMode) {
                 console.log('🔄 [Dynamic Mode] Enabled - Processing dynamic content...');
