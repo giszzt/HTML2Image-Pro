@@ -8,8 +8,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install Chinese fonts (Noto CJK) for proper character rendering
-RUN apt-get update && apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra && rm -rf /var/lib/apt/lists/*
+# Install Microsoft YaHei fonts (copied from local Windows system)
+COPY fonts/*.ttc /usr/share/fonts/truetype/msyh/
+RUN fc-cache -fv
 
 # Install dependencies
 RUN npm install
