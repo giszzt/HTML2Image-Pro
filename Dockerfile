@@ -10,6 +10,8 @@ COPY package*.json ./
 
 # Install Microsoft YaHei fonts (copied from local Windows system)
 COPY fonts/*.ttc /usr/share/fonts/truetype/msyh/
+# Configure fontconfig to use Microsoft YaHei as default sans-serif fallback
+COPY fonts/local.conf /etc/fonts/local.conf
 RUN fc-cache -fv
 
 # Install dependencies
