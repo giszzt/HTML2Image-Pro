@@ -239,6 +239,18 @@ class PlaywrightRenderer {
             // Inject styles to stabilize rendering
             await page.addStyleTag({
                 content: `
+                    /* Set Microsoft YaHei as default fallback for Chinese text */
+                    @font-face {
+                        font-family: 'system-fallback';
+                        src: local('Microsoft YaHei'), local('微软雅黑'), local('PingFang SC'), local('Noto Sans CJK SC');
+                    }
+                    body, html {
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', sans-serif !important;
+                    }
+                    /* Ensure all elements inherit the font unless explicitly set */
+                    *:not([style*="font-family"]) {
+                        font-family: inherit;
+                    }
                     /* Disable animations for consistent snapshots */
                     *, *::before, *::after {
                         animation-duration: 0s !important;
